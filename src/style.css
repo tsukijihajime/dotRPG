@@ -1,0 +1,283 @@
+:root {
+  --bg-0: #07060f;
+  --bg-1: #141130;
+  --accent: #f4c95d;
+  --accent-2: #8f7cff;
+  --text: #e9e6ff;
+  --muted: #8d88b5;
+  --btn: #2a2552;
+  --btn-hi: #3c357a;
+  --font: 'DotGothic16', system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background:
+    radial-gradient(ellipse at 50% 0%, #2a1f5c 0%, transparent 60%),
+    radial-gradient(ellipse at 50% 100%, #1b3a4a 0%, transparent 55%),
+    var(--bg-0);
+  color: var(--text);
+  font-family: var(--font);
+  overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+#app {
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: max(8px, env(safe-area-inset-top)) 8px max(8px, env(safe-area-inset-bottom));
+}
+
+/* ---------- 画面 ---------- */
+#screen-frame {
+  --w: min(96vw, calc((100dvh - 90px) * 256 / 240), 1024px);
+  position: relative;
+  width: var(--w);
+  aspect-ratio: 256 / 240;
+  padding: 6px;
+  border-radius: 14px;
+  background: linear-gradient(145deg, #3a3170, #15122e 60%, #2b2458);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+    0 20px 60px rgba(0, 0, 0, 0.6),
+    0 0 80px rgba(143, 124, 255, 0.25);
+  animation: frame-glow 6s ease-in-out infinite;
+}
+
+@keyframes frame-glow {
+  0%, 100% { box-shadow: 0 0 0 1px rgba(255,255,255,.08) inset, 0 20px 60px rgba(0,0,0,.6), 0 0 70px rgba(143,124,255,.22); }
+  50% { box-shadow: 0 0 0 1px rgba(255,255,255,.08) inset, 0 20px 60px rgba(0,0,0,.6), 0 0 100px rgba(244,201,93,.18); }
+}
+
+#game {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  background: #000;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+#loading {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--accent);
+  letter-spacing: 0.3em;
+  font-size: clamp(14px, 3vw, 22px);
+  animation: blink 1s steps(2) infinite;
+}
+
+#loading.hidden {
+  display: none;
+}
+
+@keyframes blink {
+  50% { opacity: 0.2; }
+}
+
+/* ---------- キー説明 ---------- */
+#key-help {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px 18px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+kbd {
+  display: inline-block;
+  min-width: 1.6em;
+  margin: 0 2px;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: #1f1b40;
+  border: 1px solid #3a3470;
+  border-bottom-width: 3px;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 12px;
+  text-align: center;
+}
+
+#btn-mute {
+  font-family: var(--font);
+  font-size: 13px;
+  color: var(--text);
+  background: #1f1b40;
+  border: 1px solid #3a3470;
+  border-radius: 999px;
+  padding: 3px 12px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+#btn-mute:hover {
+  background: #2d2760;
+}
+
+#btn-mute:active {
+  transform: scale(0.95);
+}
+
+/* ---------- タッチ操作 ---------- */
+#touch-controls {
+  display: none;
+  width: min(100%, 480px);
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 12px;
+}
+
+#dpad {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  touch-action: none;
+}
+
+.dpad-btn,
+.dpad-center {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(180deg, var(--btn-hi), var(--btn));
+  box-shadow: 0 4px 0 #120f28;
+}
+
+.dpad-btn.up { left: 50px; top: 0; border-radius: 10px 10px 0 0; }
+.dpad-btn.down { left: 50px; top: 100px; border-radius: 0 0 10px 10px; }
+.dpad-btn.left { left: 0; top: 50px; border-radius: 10px 0 0 10px; }
+.dpad-btn.right { left: 100px; top: 50px; border-radius: 0 10px 10px 0; }
+.dpad-center { left: 50px; top: 50px; }
+
+.dpad-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 0;
+  height: 0;
+  border: 8px solid transparent;
+  opacity: 0.55;
+}
+.dpad-btn.up::after { border-bottom-color: var(--text); top: -8px; }
+.dpad-btn.down::after { border-top-color: var(--text); top: 8px; }
+.dpad-btn.left::after { border-right-color: var(--text); left: -8px; }
+.dpad-btn.right::after { border-left-color: var(--text); left: 8px; }
+
+.dpad-btn.active {
+  background: linear-gradient(180deg, #5a4fb0, #3c357a);
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #120f28;
+}
+
+#ab {
+  position: relative;
+  width: 160px;
+  height: 130px;
+}
+
+.round-btn {
+  position: absolute;
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  border: none;
+  font-family: var(--font);
+  font-size: 22px;
+  color: #fff;
+  touch-action: none;
+  box-shadow: 0 5px 0 rgba(0, 0, 0, 0.45), inset 0 2px 0 rgba(255, 255, 255, 0.25);
+  transition: transform 0.05s;
+}
+
+#btn-a {
+  right: 0;
+  top: 0;
+  background: radial-gradient(circle at 35% 30%, #ffd77a, #e0a12f 70%);
+  color: #4a2a00;
+}
+
+#btn-b {
+  left: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 35% 30%, #a99bff, #5b4bd1 70%);
+}
+
+.round-btn.active {
+  transform: translateY(3px) scale(0.96);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.45), inset 0 2px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* タッチ端末ではボタンを表示 */
+@media (pointer: coarse) {
+  #touch-controls {
+    display: flex;
+  }
+  #key-help span {
+    display: none;
+  }
+  #screen-frame {
+    --w: min(98vw, calc((100dvh - 250px) * 256 / 240));
+    padding: 4px;
+  }
+  #app {
+    justify-content: flex-start;
+    padding-top: max(16px, env(safe-area-inset-top));
+  }
+}
+
+/* 横向きスマホ：ボタンを左右に配置 */
+@media (pointer: coarse) and (orientation: landscape) {
+  #app {
+    justify-content: center;
+    padding-top: 8px;
+  }
+  #screen-frame {
+    --w: min(calc((100dvh - 20px) * 256 / 240), 60vw);
+  }
+  #touch-controls {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    padding: 0 max(16px, env(safe-area-inset-left));
+    pointer-events: none;
+  }
+  #dpad,
+  #ab {
+    pointer-events: auto;
+  }
+  #key-help {
+    position: fixed;
+    top: 8px;
+    right: 12px;
+  }
+}

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#07060f" />
+    <title>ドットクエスト ～やみの魔導王～ | dotRPG</title>
+    <meta name="description" content="ブラウザで遊べるレトロなドット絵RPG。町で装備をととのえ、やみの洞くつの奥にひそむ魔導王ザルバを倒そう。PC・スマホ対応。" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <main id="app">
+      <h1 class="visually-hidden">ドットクエスト ～やみの魔導王～</h1>
+      <div id="screen-frame">
+        <canvas id="game" aria-label="ゲーム画面"></canvas>
+        <div id="loading">LOADING...</div>
+      </div>
+
+      <div id="touch-controls" aria-hidden="true">
+        <div id="dpad">
+          <div class="dpad-btn up" data-dir="up"></div>
+          <div class="dpad-btn down" data-dir="down"></div>
+          <div class="dpad-btn left" data-dir="left"></div>
+          <div class="dpad-btn right" data-dir="right"></div>
+          <div class="dpad-center"></div>
+        </div>
+        <div id="ab">
+          <button id="btn-b" class="round-btn" data-act="b">B</button>
+          <button id="btn-a" class="round-btn" data-act="a">A</button>
+        </div>
+      </div>
+
+      <footer id="key-help">
+        <span><kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd> いどう</span>
+        <span><kbd>Z</kbd>/<kbd>Enter</kbd> けってい・はなす</span>
+        <span><kbd>X</kbd>/<kbd>Esc</kbd> メニュー・もどる</span>
+        <button id="btn-mute" type="button">♪ ON</button>
+      </footer>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
