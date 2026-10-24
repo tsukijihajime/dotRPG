@@ -15,6 +15,8 @@ export class MapScene {
   // プレイヤー移動状態 (グリッド歩行)
   playerX = 10;
   playerY = 17;
+  fromX = 10;
+  fromY = 17;
   playerDir: Dir = 'down';
   isMoving = false;
   moveProgress = 0; // 0..1
@@ -40,6 +42,8 @@ export class MapScene {
     this.currentMapData = MAPS[mapId] || MAPS['town'];
     this.playerX = x;
     this.playerY = y;
+    this.fromX = x;
+    this.fromY = y;
     this.playerDir = dir;
     this.isMoving = false;
     this.moveProgress = 0;
@@ -63,6 +67,8 @@ export class MapScene {
       this.currentMapData = nextMap;
       this.playerX = targetX;
       this.playerY = targetY;
+      this.fromX = targetX;
+      this.fromY = targetY;
       this.playerDir = targetDir;
       party.currentMap = targetMapId;
       party.playerX = targetX;
@@ -121,6 +127,8 @@ export class MapScene {
       if (this.moveProgress >= 1) {
         this.moveProgress = 0;
         this.isMoving = false;
+        this.fromX = this.playerX;
+        this.fromY = this.playerY;
         this.walkAnimFrame = 0;
 
         // ワープ判定
@@ -163,6 +171,8 @@ export class MapScene {
       const targetY = this.playerY + dy;
 
       if (this.canPass(targetX, targetY)) {
+        this.fromX = this.playerX;
+        this.fromY = this.playerY;
         this.playerX = targetX;
         this.playerY = targetY;
         this.isMoving = true;
@@ -382,10 +392,8 @@ export class MapScene {
     let drawPlayerPxY = this.playerY * TILE;
 
     if (this.isMoving) {
-      if (this.playerDir === 'up') drawPlayerPxY -= (1 - this.moveProgress) * TILE;
-      else if (this.playerDir === 'down') drawPlayerPxY += (1 - this.moveProgress) * TILE;
-      else if (this.playerDir === 'left') drawPlayerPxX -= (1 - this.moveProgress) * TILE;
-      else if (this.playerDir === 'right') drawPlayerPxX += (1 - this.moveProgress) * TILE;
+      drawPlayerPxX = (this.fromX + (this.playerX - this.fromX) * this.moveProgress) * TILE;
+      drawPlayerPxY = (this.fromY + (this.playerY - this.fromY) * this.moveProgress) * TILE;
     }
 
     const camX = Math.floor(drawPlayerPxX - W / 2 + TILE / 2);

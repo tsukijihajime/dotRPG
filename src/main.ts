@@ -88,6 +88,7 @@ function startMap(): void {
 
 function startBattle(monsterId: string): void {
   switchScene('battle');
+  void fadeIn(12);
   battleScene.start(monsterId, (res: BattleResult) => {
     void (async () => {
       await fadeOut(15);
@@ -105,6 +106,7 @@ function startBattle(monsterId: string): void {
 
 function startBossBattle(): void {
   switchScene('battle');
+  void fadeIn(15);
   battleScene.start('boss', (res: BattleResult) => {
     void (async () => {
       await fadeOut(20);
