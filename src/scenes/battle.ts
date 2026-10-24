@@ -1,5 +1,5 @@
 // コマンド式バトルシーン
-import { drawWindow, drawText, drawCursor, W, H, ctx } from '../engine/screen';
+import { drawWindow, drawText, drawCursor, wrapText, W, H, ctx } from '../engine/screen';
 import { input } from '../engine/input';
 import { sound } from '../engine/audio';
 import { shake, flash } from '../engine/fx';
@@ -470,11 +470,15 @@ export class BattleScene {
     // メッセージウィンドウ (下部全体)
     if (this.state !== 'player_command' && this.state !== 'spell_select' && this.state !== 'item_select') {
       const mwX = 12;
-      const mwY = H - 58;
+      const mwY = H - 60;
       const mwW = W - 24;
-      const mwH = 48;
+      const mwH = 50;
       drawWindow(mwX, mwY, mwW, mwH);
-      drawText(this.currentMessage, mwX + 12, mwY + 14, '#ffffff', 11);
+
+      const lines = wrapText(this.currentMessage, mwW - 24, 11);
+      for (let i = 0; i < Math.min(lines.length, 2); i++) {
+        drawText(lines[i], mwX + 12, mwY + 11 + i * 16, '#ffffff', 11);
+      }
 
       if (this.waitingPrompt && Math.floor(frame / 16) % 2 === 0) {
         drawText('▼', mwX + mwW - 16, mwY + mwH - 16, '#f4c95d', 10);
