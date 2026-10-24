@@ -10,7 +10,7 @@ export function wait(frames: number): Promise<void> {
 }
 
 export const fx = {
-  fade: 1, // 0 = 見える, 1 = 真っ黒
+  fade: 0, // 0 = 見える, 1 = 真っ黒
   fadeColor: '#000',
   flashColor: '#fff',
   flashFrames: 0,

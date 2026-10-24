@@ -41,6 +41,11 @@ function init(): void {
     });
   }
 
+  // グローバルエラーを画面上に表示（デバッグ用）
+  window.addEventListener('error', (e) => {
+    console.error('Game Error:', e.error || e.message);
+  });
+
   // ローディング画面を非表示にする
   const loading = document.getElementById('loading');
   if (loading) loading.classList.add('hidden');
