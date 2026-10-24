@@ -69,8 +69,28 @@ const TOWN_ROWS = [
   'ttttttttttDDtttttttttttt',
 ];
 
+// ----------------- お城: ラダ王城 (16x14) -----------------
+// 凡例:
+// w: 城壁  e: 大理石床  c: 赤絨毯  K: 玉座  D: 扉
+const CASTLE_ROWS = [
+  'wwwwwwwwwwwwwwww',
+  'wweeeeeceeeeeeww',
+  'wweeeeeKeeeeeeww',
+  'wweeeeeceeeeeeww',
+  'wweeeeeceeeeeeww',
+  'wweeeeeceeeeeeww',
+  'wweeeeeceeeeeeww',
+  'wweeeeeceeeeeeww',
+  'wweeeeeceeeeeeww',
+  'wweeeeeceeeeeeww',
+  'wweeeeeceeeeeeww',
+  'wweeeeeceeeeeeww',
+  'wwweeeeDeeeewwww',
+  'wwwwwwwwwwwwwwww',
+];
+
 // ----------------- フィールド (32x32) -----------------
-// G: 平原  F: 森  M: 山  W: 水  P: 道  B: 橋  T: 町  C: 洞窟
+// G: 平原  F: 森  M: 山  W: 水  P: 道  B: 橋  T: 町  C: 洞窟  H: 城
 const FIELD_ROWS = [
   'MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM',
   'MMGGGGFFFFFFFFFMMMMMMMMMMMMMMMMM',
@@ -82,7 +102,7 @@ const FIELD_ROWS = [
   'MGFFGGGGGGGGGGFFFMMMFFFFFFFFFFGM',
   'MGGGGGGGGGGGGGGFFFFFFFFFFFFFFFGM',
   'MGGGGGGGGGGGGGGFFFFFFFFWWWWFFFGM',
-  'MGGGGGGTTGGGGGGFFFFFFWWWWWWWWFGM',
+  'MGGHGGTTGGGGGGFFFFFFWWWWWWWWFGM',
   'MGGGGGGPPGGGGGGFFFFFWWWWWWWWWFGM',
   'MGGGGGGPPPGGGGGFFFFWWWWWWWWWWFGM',
   'MGGGGGGGPPPGGGGFFFFWWWWWWWWWWFGM',
@@ -228,6 +248,70 @@ export const MAPS: Record<string, MapData> = {
     ],
   },
 
+  castle: {
+    id: 'castle',
+    name: 'ラダ王城',
+    bgm: 'castle',
+    width: 16,
+    height: 14,
+    tiles: CASTLE_ROWS,
+    warps: [
+      { x: 7, y: 12, targetMap: 'field', targetX: 3, targetY: 11, targetDir: 'down', sfx: 'stairs' },
+    ],
+    chests: [
+      { id: 'castle_chest_1', x: 3, y: 3, item: 'club' },
+      { id: 'castle_chest_2', x: 12, y: 3, item: 'herb' },
+    ],
+    npcs: [
+      {
+        id: 'king',
+        name: '国王',
+        sprite: 'king',
+        x: 7,
+        y: 2,
+        dir: 'down',
+        dialog: [
+          'おお、若き勇者よ！\n世界の平和はおぬしの双肩にかかっておる。',
+          '町で装備をととのえ、北東の山奥にある\n「やみの洞くつ」の魔導王ザルバを倒すのじゃ！',
+        ],
+      },
+      {
+        id: 'minister',
+        name: '大臣',
+        sprite: 'elder',
+        x: 9,
+        y: 3,
+        dir: 'left',
+        dialog: [
+          '王様から授かった支度金50Gと、\n左右の宝箱にある品をお役立てください。',
+          '南の扉から城を出て東へ少し歩けば、\n「ルルの町」がございますぞ。',
+        ],
+      },
+      {
+        id: 'guard_left',
+        name: '近衛兵',
+        sprite: 'soldier',
+        x: 5,
+        y: 6,
+        dir: 'right',
+        dialog: [
+          '我ら近衛兵も命を賭して王城を死守する！\nどうかご無事で、勇者殿！',
+        ],
+      },
+      {
+        id: 'guard_right',
+        name: '近衛兵',
+        sprite: 'soldier',
+        x: 9,
+        y: 6,
+        dir: 'left',
+        dialog: [
+          '外の魔物は凶暴です。\n薬草や防具をしっかり準備してください！',
+        ],
+      },
+    ],
+  },
+
   field: {
     id: 'field',
     name: 'アレフ平原',
@@ -236,6 +320,7 @@ export const MAPS: Record<string, MapData> = {
     height: 32,
     tiles: FIELD_ROWS,
     warps: [
+      { x: 3, y: 10, targetMap: 'castle', targetX: 7, targetY: 11, targetDir: 'up', sfx: 'stairs' },
       { x: 7, y: 10, targetMap: 'town', targetX: 10, targetY: 18, targetDir: 'up', sfx: 'stairs' },
       { x: 23, y: 2, targetMap: 'cave1', targetX: 2, targetY: 5, targetDir: 'right', sfx: 'stairs' },
     ],

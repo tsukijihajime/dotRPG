@@ -87,6 +87,24 @@ const TRACKS: Record<string, TrackDef> = {
       },
     ],
   },
+  castle: {
+    bpm: 88,
+    voices: [
+      {
+        wave: 'pulse25',
+        vol: 0.15,
+        notes: `C5-4 G4-2 C5-2 E5-4 D5-2 C5-2 | D5-6 E5-2 D5-4 G4-4 | E5-4 F5-2 G5-2 A5-4 G5-2 F5-2 | E5-6 D5-2 C5-8 |
+          A4-4 B4-2 C5-2 D5-4 C5-2 B4-2 | C5-4 D5-2 E5-2 F5-8 | G5-4 F5-2 E5-2 D5-4 C5-2 D5-2 | C5-12 r-4`,
+      },
+      { wave: 'pulse12', vol: 0.07, notes: `E4-16 | G4-16 | C5-16 | G4-8 E4-8 | F4-16 | A4-16 | B4-16 | E4-16` },
+      {
+        wave: 'triangle',
+        vol: 0.28,
+        notes: `C3-4 E3-4 G3-4 E3-4 | G2-4 B2-4 D3-4 G2-4 | C3-4 E3-4 F3-4 D3-4 | C3-4 G2-4 C3-8 |
+          F2-4 A2-4 D3-4 F2-4 | A2-4 C3-4 F3-4 A2-4 | G2-4 B2-4 G2-4 B2-4 | C3-4 G2-4 C3-8`,
+      },
+    ],
+  },
   field: {
     bpm: 132,
     voices: [
