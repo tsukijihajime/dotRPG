@@ -115,14 +115,26 @@ function startBossBattle(): void {
       await fadeOut(20);
       if (res.won) {
         party.bossDefeated = true;
-        startEnding();
+        // 凱旋：城の玉座の間へ自動帰還
+        party.currentMap = 'castle';
+        party.playerX = 7;
+        party.playerY = 4;
+        startMap('up');
+        await fadeIn(20);
+        mapScene.triggerTriumphalEvent(() => {
+          void (async () => {
+            await fadeOut(25);
+            startEnding();
+            await fadeIn(20);
+          })();
+        });
       } else {
         party.currentMap = 'town';
         party.playerX = 17;
         party.playerY = 15;
         startMap();
+        await fadeIn(20);
       }
-      await fadeIn(20);
     })();
   });
 }

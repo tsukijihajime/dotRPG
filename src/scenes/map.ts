@@ -4,6 +4,7 @@ import { sound } from '../engine/audio';
 import { fadeOut, fadeIn, flash } from '../engine/fx';
 import { tiles, chars, chestSprites, type Dir } from '../engine/sprites';
 import { MAPS, type MapData } from '../data/maps';
+import { ITEMS } from '../data/items';
 import { party } from '../systems/party';
 import { dialog } from '../ui/dialog';
 import { fieldMenu } from '../ui/menu';
@@ -84,6 +85,38 @@ export class MapScene {
     };
 
     nextPart();
+  }
+
+  triggerTriumphalEvent(onComplete: () => void): void {
+    if (this.currentMapData.id !== 'castle') return;
+    this.playerDir = 'up';
+
+    void (async () => {
+      sound.stopBgm();
+      await sound.jingle('fanfare');
+      sound.bgm('castle');
+
+      const parts = [
+        '兵士たち「ワーーーッ！！\n勇者様が魔導王ザルバを倒されたぞーーっ！！」',
+        '大臣「おお……！ なんという奇跡！\n我が国に……いや、全世界に平和が戻ったのです！」',
+        '国王「おお、勇者よ！\nよくぞ魔導王ザルバを打ち倒してくれた！」',
+        '国王「闇の霧は晴れ渡り、ふたたび世界に希望の光が満ちあふれたのじゃ。」',
+        '国王「おぬしの名は、この国の歴史に永遠の伝説として刻まれるであろう！」',
+        '国王「真の勇者よ、心から礼を言うぞ！」',
+        '兵士たち「勇者万歳！　平和万歳！！」',
+      ];
+
+      let idx = 0;
+      const nextPart = () => {
+        if (idx < parts.length) {
+          dialog.show(parts[idx++], { onFinish: nextPart });
+        } else {
+          onComplete();
+        }
+      };
+
+      nextPart();
+    })();
   }
 
   changeMap(targetMapId: string, targetX: number, targetY: number, targetDir: Dir = 'down', sfxName = 'stairs'): void {
@@ -370,6 +403,21 @@ export class MapScene {
       }
 
       // 通常会話
+      if (party.bossDefeated && this.currentMapData.id === 'castle') {
+        if (npc.id === 'king') {
+          dialog.show('国王「おお、世界を救いし勇者よ！\n民はおぬしの偉業を永遠に語り継ぐであろう！」');
+          return true;
+        }
+        if (npc.id === 'minister') {
+          dialog.show('大臣「勇者様、まことにありがとうございました！\n全世界が歓喜に包まれておりますぞ！」');
+          return true;
+        }
+        if (npc.id.startsWith('guard')) {
+          dialog.show('近衛兵「勇者殿！　あなたこそまことの英雄だ！\nこの国の誇りです！」');
+          return true;
+        }
+      }
+
       const fullMsg = npc.dialog.join('\n');
       dialog.show(fullMsg);
       return true;
@@ -394,7 +442,8 @@ export class MapScene {
           dialog.show(`宝箱をあけた！\n${chest.gold}ゴールドを 手に入れた！`);
         } else if (chest.item) {
           party.addItem(chest.item);
-          dialog.show(`宝箱をあけた！\n${chest.item}を 手に入れた！`);
+          const itemName = ITEMS[chest.item]?.name ?? chest.item;
+          dialog.show(`宝箱をあけた！\n${itemName}を 手に入れた！`);
         }
       }
       return;
