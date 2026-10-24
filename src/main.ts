@@ -67,19 +67,22 @@ function startTitle(): void {
       } else {
         party.resetNewGame();
       }
-      startMap();
+      startMap(isContinue ? 'down' : 'up');
       await fadeIn(15);
+      if (!isContinue && !party.openingSeen) {
+        mapScene.triggerOpeningEvent();
+      }
     })();
   });
 }
 
-function startMap(): void {
+function startMap(initialDir: 'down' | 'up' | 'left' | 'right' = 'down'): void {
   switchScene('map');
   mapScene.init(
     party.currentMap,
     party.playerX,
     party.playerY,
-    'down',
+    initialDir,
     (monsterId) => startBattle(monsterId),
     () => startBossBattle(),
     () => startEnding()

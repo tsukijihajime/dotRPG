@@ -26,6 +26,7 @@ export interface SaveData {
   playerY: number;
   openedChests: string[];
   bossDefeated: boolean;
+  openingSeen?: boolean;
 }
 
 const SAVE_KEY = 'DOTRPG_SAVE_V1';
@@ -53,19 +54,20 @@ class PartySystem {
     atk: 9,
     def: 4,
     exp: 0,
-    gold: 40,
-    weapon: 'club',
+    gold: 0,
+    weapon: null,
     armor: 'cloth_armor',
     shield: null,
-    items: ['herb', 'herb'],
+    items: [],
     spells: [],
   };
 
-  currentMap = 'town';
-  playerX = 10;
-  playerY = 17;
+  currentMap = 'castle';
+  playerX = 7;
+  playerY = 4;
   openedChests: Set<string> = new Set();
   bossDefeated = false;
+  openingSeen = false;
 
   resetNewGame(): void {
     this.player = {
@@ -78,18 +80,19 @@ class PartySystem {
       atk: 9,
       def: 4,
       exp: 0,
-      gold: 40,
-      weapon: 'club',
+      gold: 0,
+      weapon: null,
       armor: 'cloth_armor',
       shield: null,
-      items: ['herb', 'herb'],
+      items: [],
       spells: [],
     };
-    this.currentMap = 'town';
-    this.playerX = 10;
-    this.playerY = 17;
+    this.currentMap = 'castle';
+    this.playerX = 7;
+    this.playerY = 4;
     this.openedChests.clear();
     this.bossDefeated = false;
+    this.openingSeen = false;
   }
 
   get totalAtk(): number {
@@ -167,6 +170,7 @@ class PartySystem {
         playerY: this.playerY,
         openedChests: Array.from(this.openedChests),
         bossDefeated: this.bossDefeated,
+        openingSeen: this.openingSeen,
       };
       localStorage.setItem(SAVE_KEY, JSON.stringify(data));
       sound.sfx('confirm');
@@ -188,6 +192,7 @@ class PartySystem {
       this.playerY = data.playerY;
       this.openedChests = new Set(data.openedChests);
       this.bossDefeated = data.bossDefeated ?? false;
+      this.openingSeen = data.openingSeen ?? true;
       sound.sfx('confirm');
       return true;
     } catch (e) {

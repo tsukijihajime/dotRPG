@@ -54,6 +54,38 @@ export class MapScene {
     sound.bgm(this.currentMapData.bgm);
   }
 
+  triggerOpeningEvent(): void {
+    if (party.openingSeen || this.currentMapData.id !== 'castle') return;
+    this.playerDir = 'up';
+
+    const parts = [
+      '国王「おお、若き勇者よ！\nよくぞ余の呼び出しに応えてくれた。',
+      '国王「いま、世界は暗黒の雲に覆われようとしておる。\n北東の山奥にある「やみの洞くつ」にて、古の魔導王ザルバが邪悪な魔力を高めておるのじゃ。',
+      '国王「ザルバを討ち滅ぼし、この地に再び光を取り戻せるのは……まこと、おぬししかおらぬ！',
+      '国王「旅の支度金として、50ゴールドを授けよう。\nまた、城内の宝箱にある品も持っていくがよい！',
+    ];
+
+    let idx = 0;
+    const nextPart = () => {
+      if (idx < parts.length) {
+        dialog.show(parts[idx++], { onFinish: nextPart });
+      } else {
+        party.player.gold += 50;
+        party.openingSeen = true;
+        sound.sfx('confirm');
+        dialog.show('勇者は 支度金として 50ゴールドを 受け取った！', {
+          onFinish: () => {
+            dialog.show(
+              '国王「まずは南の扉から城を出て、東にある「ルルの町」で装備をととのえるのじゃ！\n頼んだぞ、勇者よ！'
+            );
+          },
+        });
+      }
+    };
+
+    nextPart();
+  }
+
   changeMap(targetMapId: string, targetX: number, targetY: number, targetDir: Dir = 'down', sfxName = 'stairs'): void {
     const nextMap = MAPS[targetMapId];
     if (!nextMap) return;
