@@ -265,10 +265,84 @@ function stairs(g: G, down: boolean): void {
   });
 }
 
+function castleWall(g: G): void {
+  rect(g, 0, 0, 16, 16, '#9ea7b8');
+  for (let row = 0; row < 4; row++) {
+    const off = row % 2 === 0 ? 0 : 4;
+    for (let col = -1; col < 3; col++) {
+      const x = col * 8 + off;
+      rect(g, x, row * 4, 7, 3, '#c2cbd9');
+      rect(g, x, row * 4, 7, 1, '#e2e9f5');
+      rect(g, x, row * 4 + 2, 7, 1, '#788294');
+    }
+  }
+}
+
+function castleFloor(g: G): void {
+  rect(g, 0, 0, 16, 16, '#e8ebf0');
+  rect(g, 0, 0, 16, 1, '#ffffff');
+  rect(g, 0, 0, 1, 16, '#ffffff');
+  rect(g, 15, 0, 1, 16, '#cbd2de');
+  rect(g, 0, 15, 16, 1, '#cbd2de');
+  px(g, 7, 7, '#cbd2de');
+  px(g, 8, 8, '#cbd2de');
+}
+
+function carpet(g: G): void {
+  castleFloor(g);
+  rect(g, 1, 0, 14, 16, '#b81e28');
+  rect(g, 2, 0, 12, 16, '#d62839');
+  rect(g, 1, 0, 1, 16, '#f4c94a');
+  rect(g, 14, 0, 1, 16, '#f4c94a');
+  for (let y = 1; y < 16; y += 4) {
+    px(g, 4, y, '#981018');
+    px(g, 11, y, '#981018');
+  }
+}
+
+function throne(g: G): void {
+  carpet(g);
+  rect(g, 3, 1, 10, 14, '#f4c94a');
+  rect(g, 4, 2, 8, 11, '#981018');
+  rect(g, 5, 3, 6, 9, '#c41e3a');
+  px(g, 3, 0, '#fff0a0');
+  px(g, 7, 0, '#fff0a0');
+  px(g, 8, 0, '#fff0a0');
+  px(g, 12, 0, '#fff0a0');
+  rect(g, 2, 8, 2, 6, '#f4c94a');
+  rect(g, 12, 8, 2, 6, '#f4c94a');
+  rect(g, 3, 11, 10, 3, '#981018');
+  rect(g, 4, 11, 8, 2, '#d62839');
+}
+
+function castleExterior(g: G): void {
+  grass(g, 25);
+  // 左塔
+  rect(g, 1, 4, 4, 10, '#c2cbd9');
+  rect(g, 1, 4, 4, 1, '#e2e9f5');
+  rect(g, 0, 2, 6, 2, '#3a6ad0');
+  px(g, 2, 1, '#3a6ad0');
+  // 右塔
+  rect(g, 11, 4, 4, 10, '#c2cbd9');
+  rect(g, 11, 4, 4, 1, '#e2e9f5');
+  rect(g, 10, 2, 6, 2, '#3a6ad0');
+  px(g, 12, 1, '#3a6ad0');
+  // 中央本館
+  rect(g, 4, 6, 8, 8, '#a6b1c2');
+  rect(g, 4, 5, 8, 1, '#e2e9f5');
+  for (let x = 4; x <= 11; x += 2) px(g, x, 5, '#c2cbd9');
+  // 中央門
+  rect(g, 7, 10, 2, 4, '#2a160a');
+  // 旗
+  rect(g, 2, 0, 2, 1, '#f4c94a');
+  rect(g, 12, 0, 2, 1, '#f4c94a');
+}
+
 export type TileId =
   | 'G' | 'F' | 'M' | 'W' | 'P' | 'B' | 'T' | 'C'
   | 't' | 'g' | ',' | '#' | '.' | '=' | '~' | 'f' | 'b' | 'a' | 'D'
-  | 'R' | '_' | '>' | '<';
+  | 'R' | '_' | '>' | '<'
+  | 'K' | 'c' | 'e' | 'w' | 'H';
 
 export interface TileInfo {
   solid: boolean;
@@ -395,6 +469,7 @@ export const PALETTES: Record<string, Palette> = {
   innkeeper: { H: '#5a3a2a', C: '#c86a3a', D: '#9a4a2a', P: '#5a4a3a', B: '#f0e0c0' },
   oldwoman: { H: '#c8c8d0', C: '#6a8a6a', D: '#4a6a4a', P: '#4a6a4a' },
   man: { H: '#2a2a3a', C: '#c8a050', D: '#9a7830', P: '#4a4a5a' },
+  king: { H: '#f4c94a', S: '#f2c6a0', C: '#c41e3a', D: '#8b0000', P: '#3a1a1a', B: '#fff0f0', F: '#5a3a20' },
   boss: { H: '#3a1a4a', S: '#7a6a8a', E: '#ff3030', C: '#5a2a7a', D: '#3a1a5a', P: '#2a1a3a', F: '#1a1020' },
 };
 
@@ -443,6 +518,12 @@ export function initSprites(): void {
   defTile('b', true, 0, bed);
   defTile('a', true, 0, altar);
   defTile('D', false, 0, door);
+
+  defTile('w', true, 0, castleWall);
+  defTile('e', false, 0, castleFloor);
+  defTile('c', false, 0, carpet);
+  defTile('K', true, 0, throne);
+  defTile('H', false, 0, castleExterior);
 
   defTile('R', true, 0, (g) => rock(g));
   defTile('_', false, 1, caveFloor);
