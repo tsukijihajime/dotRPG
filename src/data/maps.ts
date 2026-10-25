@@ -321,8 +321,9 @@ export const MAPS: Record<string, MapData> = {
     tiles: FIELD_ROWS,
     warps: [
       { x: 3, y: 10, targetMap: 'castle', targetX: 7, targetY: 11, targetDir: 'up', sfx: 'stairs' },
+      { x: 6, y: 10, targetMap: 'town', targetX: 10, targetY: 18, targetDir: 'up', sfx: 'stairs' },
       { x: 7, y: 10, targetMap: 'town', targetX: 10, targetY: 18, targetDir: 'up', sfx: 'stairs' },
-      { x: 23, y: 2, targetMap: 'cave1', targetX: 2, targetY: 5, targetDir: 'right', sfx: 'stairs' },
+      { x: 22, y: 2, targetMap: 'cave1', targetX: 2, targetY: 5, targetDir: 'right', sfx: 'stairs' },
     ],
     chests: [],
     npcs: [],
@@ -338,7 +339,7 @@ export const MAPS: Record<string, MapData> = {
     height: 16,
     tiles: CAVE1_ROWS,
     warps: [
-      { x: 2, y: 5, targetMap: 'field', targetX: 23, targetY: 3, targetDir: 'down', sfx: 'stairs' },
+      { x: 2, y: 5, targetMap: 'field', targetX: 22, targetY: 3, targetDir: 'down', sfx: 'stairs' },
       { x: 16, y: 14, targetMap: 'cave2', targetX: 2, targetY: 1, targetDir: 'right', sfx: 'stairs' },
     ],
     chests: [
