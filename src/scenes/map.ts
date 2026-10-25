@@ -27,6 +27,9 @@ export class MapScene {
   // ステップ数カウント（エンカウント用）
   stepCount = 0;
 
+  // 演出・シーン切り替え中フラグ（移動ガード）
+  isBusy = false;
+
   onEncounterCallback: ((monsterId: string) => void) | null = null;
   onBossEncounterCallback: (() => void) | null = null;
   onEndingCallback: (() => void) | null = null;
@@ -48,6 +51,7 @@ export class MapScene {
     this.playerDir = dir;
     this.isMoving = false;
     this.moveProgress = 0;
+    this.isBusy = false;
     this.onEncounterCallback = onEncounter;
     this.onBossEncounterCallback = onBoss;
     this.onEndingCallback = onEnding;
@@ -126,6 +130,7 @@ export class MapScene {
     sound.sfx(sfxName);
     this.isMoving = false;
     this.moveProgress = 0;
+    this.isBusy = true;
 
     void (async () => {
       await fadeOut(12);
@@ -140,11 +145,13 @@ export class MapScene {
       party.playerY = targetY;
       sound.bgm(nextMap.bgm);
       await fadeIn(12);
+      this.isBusy = false;
     })();
   }
 
   update(frame: number): void {
-    // ショップやダイアログ、メニューが開いている間は移動しない
+    // 演出・シーン切り替え中、またはショップ・ダイアログ・メニュー時は移動しない
+    if (this.isBusy) return;
     if (shopUI.active) {
       shopUI.update(frame);
       return;
@@ -343,12 +350,14 @@ export class MapScene {
                 dialog.show('お金がたりないよ！');
               } else {
                 party.player.gold -= 10;
+                this.isBusy = true;
                 void (async () => {
                   await fadeOut(15);
                   party.player.hp = party.player.maxHp;
                   party.player.mp = party.player.maxMp;
                   await sound.jingle('inn');
                   await fadeIn(15);
+                  this.isBusy = false;
                   dialog.show('おはようございます！\nいってらっしゃい！');
                 })();
               }
@@ -361,17 +370,21 @@ export class MapScene {
       }
 
       if (npc.action === 'church') {
-        dialog.show('旅の記録をお残しになりますか？', {
+        dialog.show('神父「おお神よ、この者に祝福を……\nここまでの旅の記録をお残しになりますか？', {
           choices: ['はい', 'いいえ'],
           onChoice: (idx) => {
             if (idx === 0) {
-              party.save();
+              // ジングル中もダイアログを表示して移動をロックする
+              dialog.show('神父「おお神よ、この者の旅路の記憶を\nここに刻み給え……');
+              this.isBusy = true;
               void (async () => {
                 await sound.jingle('save');
-                dialog.show('神の御加護により\n旅の記録をセーブしました。');
+                party.save();
+                this.isBusy = false;
+                dialog.show('神父「神の御加護により\n旅の記録はセーブされました！\n安らかに行きなさい。」');
               })();
             } else {
-              dialog.show('神の御加護があらんことを……');
+              dialog.show('神父「神の御加護があらんことを……」');
             }
           },
         });
