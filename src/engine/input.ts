@@ -58,6 +58,62 @@ class Input {
       this.touch.clear();
     });
     this.initTouch();
+    this.preventZoom();
+  }
+
+  private preventZoom(): void {
+    // 1. ダブルタップズーム防止 (iOS Safari対応)
+    let lastTouchEnd = 0;
+    document.addEventListener(
+      'touchend',
+      (e) => {
+        const now = performance.now();
+        if (now - lastTouchEnd <= 350) {
+          e.preventDefault();
+        }
+        lastTouchEnd = now;
+      },
+      { passive: false }
+    );
+
+    // 2. ピンチイン・ピンチアウト (2本指以上のタッチ) によるズーム防止
+    document.addEventListener(
+      'touchstart',
+      (e) => {
+        if (e.touches.length > 1) {
+          e.preventDefault();
+        }
+      },
+      { passive: false }
+    );
+
+    // 3. iOS Safari 独自のジェスチャーズーム防止
+    const blockGesture = (e: Event) => e.preventDefault();
+    document.addEventListener('gesturestart', blockGesture, { passive: false });
+    document.addEventListener('gesturechange', blockGesture, { passive: false });
+    document.addEventListener('gestureend', blockGesture, { passive: false });
+
+    // 4. マウス/トラックパッド等のダブルクリックズーム防止
+    document.addEventListener('dblclick', (e) => e.preventDefault(), { passive: false });
+
+    // 5. 画面外バウンススクロールの防止
+    document.addEventListener(
+      'touchmove',
+      (e) => {
+        // 全画面ゲームのためデフォルトスクロールを完全に抑止
+        e.preventDefault();
+      },
+      { passive: false }
+    );
+
+    // 6. 万が一拡大された場合の復旧リセット
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', () => {
+        if (window.visualViewport && window.visualViewport.scale > 1.01) {
+          window.scrollTo(0, 0);
+        }
+      });
+    }
   }
 
   private initTouch(): void {
