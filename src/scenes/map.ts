@@ -212,6 +212,22 @@ export class MapScene {
           return;
         }
 
+        // ボスフロア（cave2）でボスの前に到着した際の自動トリガー
+        if (this.currentMapData.id === 'cave2' && !party.bossDefeated) {
+          const bossNpc = this.currentMapData.npcs.find((n) => n.id === 'boss_npc');
+          if (bossNpc) {
+            const dist = Math.abs(this.playerX - bossNpc.x) + Math.abs(this.playerY - bossNpc.y);
+            if (dist === 1) {
+              if (bossNpc.x > this.playerX) this.playerDir = 'right';
+              else if (bossNpc.x < this.playerX) this.playerDir = 'left';
+              else if (bossNpc.y > this.playerY) this.playerDir = 'down';
+              else if (bossNpc.y < this.playerY) this.playerDir = 'up';
+              this.talkToFacing();
+              return;
+            }
+          }
+        }
+
         // エンカウント判定
         this.checkEncounter();
       }
