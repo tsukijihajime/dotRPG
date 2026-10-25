@@ -406,13 +406,13 @@ export class BattleScene {
         const shakeX = this.monsterShake > 0 ? (Math.random() * 6 - 3) : 0;
         const img = this.monsterImg;
         // モンスターの原寸に合わせてスケーリング
-        const maxDrawW = this.monster.boss ? 140 : 100;
-        const maxDrawH = this.monster.boss ? 140 : 100;
+        const maxDrawW = this.monster.boss ? 130 : 96;
+        const maxDrawH = this.monster.boss ? 130 : 96;
         const scale = Math.min(maxDrawW / img.width, maxDrawH / img.height);
-        const dw = img.width * scale;
-        const dh = img.height * scale;
-        const dx = (W - dw) / 2 + shakeX;
-        const dy = 24 + (maxDrawH - dh) / 2;
+        const dw = Math.round(img.width * scale);
+        const dh = Math.round(img.height * scale);
+        const dx = Math.round((W - dw) / 2 + shakeX);
+        const dy = Math.round(20 + (maxDrawH - dh) / 2);
 
         ctx.drawImage(img, dx, dy, dw, dh);
       }
