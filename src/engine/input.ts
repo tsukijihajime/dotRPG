@@ -67,6 +67,11 @@ class Input {
     document.addEventListener(
       'touchend',
       (e) => {
+        // ボタン自体のタップ・連打はブラウザがpointerupを合成・発火できるよう除外
+        const target = e.target as HTMLElement | null;
+        if (target?.closest?.('.round-btn, .dpad-btn, #dpad')) {
+          return;
+        }
         const now = performance.now();
         if (now - lastTouchEnd <= 350) {
           e.preventDefault();
@@ -154,7 +159,8 @@ class Input {
       dpad.addEventListener('pointercancel', end);
     }
 
-    document.querySelectorAll<HTMLElement>('.round-btn').forEach((btn) => {
+    const roundBtns = Array.from(document.querySelectorAll<HTMLElement>('.round-btn'));
+    roundBtns.forEach((btn) => {
       const act = btn.dataset.act as Action;
       const up = () => {
         this.touch.delete(act);
@@ -169,7 +175,39 @@ class Input {
       });
       btn.addEventListener('pointerup', up);
       btn.addEventListener('pointercancel', up);
+      btn.addEventListener('touchend', up);
+      btn.addEventListener('touchcancel', up);
       btn.addEventListener('contextmenu', (e) => e.preventDefault());
+    });
+
+    // グローバルセーフティネット: 指が離れた・キャンセルされた時に確実にスタックを解消
+    window.addEventListener('pointerup', () => {
+      // どのボタンでもpointerupが漏れた場合の保護
+      setTimeout(() => {
+        roundBtns.forEach((btn) => {
+          if (!btn.matches(':active')) {
+            const act = btn.dataset.act as Action;
+            if (this.touch.has(act)) {
+              this.touch.delete(act);
+              btn.classList.remove('active');
+            }
+          }
+        });
+      }, 50);
+    });
+    window.addEventListener('touchend', (e) => {
+      if (e.touches.length === 0) {
+        this.touch.clear();
+        btns.forEach((b) => b.classList.remove('active'));
+        roundBtns.forEach((b) => b.classList.remove('active'));
+      }
+    });
+    window.addEventListener('touchcancel', (e) => {
+      if (e.touches.length === 0) {
+        this.touch.clear();
+        btns.forEach((b) => b.classList.remove('active'));
+        roundBtns.forEach((b) => b.classList.remove('active'));
+      }
     });
   }
 

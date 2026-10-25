@@ -42,12 +42,13 @@ export class DialogBox {
   hide(): void {
     this.active = false;
     this.choices = null;
+    input.consume();
     const cb = this.onFinishCallback;
     this.onFinishCallback = null;
     cb?.();
   }
 
-  update(frame: number): void {
+  update(frame: number, allowInput = true): void {
     if (!this.active) return;
 
     // テキスト送り中
@@ -68,8 +69,8 @@ export class DialogBox {
         }
       }
 
-      // Aボタンで早送り
-      if (input.pressed('a') || input.pressed('b')) {
+      // Aボタンで早送り (入力が許可されている場合)
+      if (allowInput && (input.pressed('a') || input.pressed('b'))) {
         const curWindowLines = this.lines.slice(this.currentLineIdx, this.currentLineIdx + 2);
         this.displayedCharCount = curWindowLines.join('').length;
         this.isComplete = true;
@@ -78,6 +79,8 @@ export class DialogBox {
       }
       return;
     }
+
+    if (!allowInput) return;
 
     // 選択肢がある場合
     if (this.choices && this.choices.length > 0) {

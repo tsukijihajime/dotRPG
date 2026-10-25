@@ -133,25 +133,34 @@ export class MapScene {
     this.isBusy = true;
 
     void (async () => {
-      await fadeOut(12);
-      this.currentMapData = nextMap;
-      this.playerX = targetX;
-      this.playerY = targetY;
-      this.fromX = targetX;
-      this.fromY = targetY;
-      this.playerDir = targetDir;
-      party.currentMap = targetMapId;
-      party.playerX = targetX;
-      party.playerY = targetY;
-      sound.bgm(nextMap.bgm);
-      await fadeIn(12);
-      this.isBusy = false;
+      try {
+        await fadeOut(12);
+        this.currentMapData = nextMap;
+        this.playerX = targetX;
+        this.playerY = targetY;
+        this.fromX = targetX;
+        this.fromY = targetY;
+        this.playerDir = targetDir;
+        party.currentMap = targetMapId;
+        party.playerX = targetX;
+        party.playerY = targetY;
+        sound.bgm(nextMap.bgm);
+        await fadeIn(12);
+      } finally {
+        this.isBusy = false;
+      }
     })();
   }
 
   update(frame: number): void {
     // 演出・シーン切り替え中、またはショップ・ダイアログ・メニュー時は移動しない
-    if (this.isBusy) return;
+    if (this.isBusy) {
+      if (dialog.active) {
+        // isBusy演出中も文字送りアニメーションは進め、強制スキップ・入力のみブロック
+        dialog.update(frame, false);
+      }
+      return;
+    }
     if (shopUI.active) {
       shopUI.update(frame);
       return;
@@ -368,13 +377,19 @@ export class MapScene {
                 party.player.gold -= 10;
                 this.isBusy = true;
                 void (async () => {
-                  await fadeOut(15);
-                  party.player.hp = party.player.maxHp;
-                  party.player.mp = party.player.maxMp;
-                  await sound.jingle('inn');
-                  await fadeIn(15);
-                  this.isBusy = false;
-                  dialog.show('おはようございます！\nいってらっしゃい！');
+                  try {
+                    await fadeOut(15);
+                    party.player.hp = party.player.maxHp;
+                    party.player.mp = party.player.maxMp;
+                    await sound.jingle('inn');
+                    await fadeIn(15);
+                  } catch (e) {
+                    console.error('Inn error', e);
+                  } finally {
+                    this.isBusy = false;
+                    sound.bgm(this.currentMapData.bgm);
+                    dialog.show('おはようございます！\nいってらっしゃい！');
+                  }
                 })();
               }
             } else {
@@ -390,14 +405,20 @@ export class MapScene {
           choices: ['はい', 'いいえ'],
           onChoice: (idx) => {
             if (idx === 0) {
-              // ジングル中もダイアログを表示して移動をロックする
+              // ジングル中もダイアログを表示して進行状況を可視化
               dialog.show('神父「おお神よ、この者の旅路の記憶を\nここに刻み給え……');
               this.isBusy = true;
               void (async () => {
-                await sound.jingle('save');
-                party.save();
-                this.isBusy = false;
-                dialog.show('神父「神の御加護により\n旅の記録はセーブされました！\n安らかに行きなさい。」');
+                try {
+                  await sound.jingle('save');
+                  party.save();
+                } catch (e) {
+                  console.error('Save error', e);
+                } finally {
+                  this.isBusy = false;
+                  sound.bgm(this.currentMapData.bgm);
+                  dialog.show('神父「神の御加護により\n旅の記録はセーブされました！\n安らかに行きなさい。」');
+                }
               })();
             } else {
               dialog.show('神父「神の御加護があらんことを……」');
