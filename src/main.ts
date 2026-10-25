@@ -41,6 +41,11 @@ function init(): void {
     });
   }
 
+  // ビルドバージョン表示
+  const buildTag = document.getElementById('build-tag');
+  if (buildTag) buildTag.textContent = __BUILD_INFO__;
+  console.log(`[dotRPG] ${__BUILD_INFO__}`);
+
   // グローバルエラーを画面上に表示（デバッグ用）
   window.addEventListener('error', (e) => {
     console.error('Game Error:', e.error || e.message);

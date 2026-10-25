@@ -150,6 +150,13 @@ kbd {
   transform: scale(0.95);
 }
 
+.build-tag {
+  font-family: var(--font);
+  font-size: 11px;
+  color: var(--muted);
+  opacity: 0.65;
+}
+
 /* ---------- タッチ操作 ---------- */
 #touch-controls {
   display: none;
@@ -245,7 +252,7 @@ kbd {
   #touch-controls {
     display: flex;
   }
-  #key-help span {
+  #key-help span:not(.build-tag) {
     display: none;
   }
   #screen-frame {

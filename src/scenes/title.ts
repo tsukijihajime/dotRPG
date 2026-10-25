@@ -73,8 +73,9 @@ export class TitleScene {
 
     drawCursor(winX + 10, winY + 13 + this.cursor * 16, false, frame);
 
-    // コピーライト
-    drawText('© 2026 dotRPG / Antigravity', W / 2, H - 16, 'rgba(255,255,255,0.7)', 9, 'center');
+    // コピーライト & バージョン情報
+    drawText('© 2026 dotRPG / Antigravity', W / 2, H - 20, 'rgba(255,255,255,0.7)', 9, 'center');
+    drawText(__BUILD_INFO__, W / 2, H - 10, 'rgba(255,255,255,0.45)', 8, 'center');
   }
 }
 
